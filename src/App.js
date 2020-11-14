@@ -25,6 +25,11 @@ import {
     DebugInstructions,
     ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import Card from './js/card';
+
+let cardPress = function () {
+    alert('You tapped the button!');
+}
 
 const App: () => React$Node = () => {
     return (
@@ -37,8 +42,7 @@ const App: () => React$Node = () => {
                     <View style={[styles.button, styles.dislike]} />
                     <View style={[styles.button, styles.skip]} />
                 </View>
-                <View style={styles.card}>
-                </View>
+                <Card/>
             </SafeAreaView>
         </>
     );
