@@ -6,25 +6,19 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     SafeAreaView,
     StyleSheet,
     ScrollView,
     View,
     Text,
-    StatusBar,
+    StatusBar, Animated, PanResponder,
 } from 'react-native';
 
 import {styles} from './js/styles/styles';
+import {initAPI} from './js/api';
 
-import {
-    Header,
-    LearnMoreLinks,
-    Colors,
-    DebugInstructions,
-    ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import Card from './js/card';
 
 let cardPress = function () {
@@ -32,6 +26,34 @@ let cardPress = function () {
 }
 
 const App: () => React$Node = () => {
+
+    useEffect(() => {
+        initAPI()
+    })
+
+    const pan = useRef(new Animated.ValueXY()).current;
+
+    const panResponder = useRef(
+        PanResponder.create({
+            onMoveShouldSetPanResponder: () => true,
+            onPanResponderGrant: () => {
+                pan.setOffset({
+                    x: pan.x._value,
+                    y: pan.y._value
+                });
+            },
+            onPanResponderMove: Animated.event(
+                [
+                    null,
+                    { dx: pan.x, dy: pan.y }
+                ]
+            ),
+            onPanResponderRelease: () => {
+                pan.flattenOffset();
+            }
+        })
+    ).current;
+
     return (
         <>
             <StatusBar barStyle="dark-content"/>
@@ -42,7 +64,13 @@ const App: () => React$Node = () => {
                     <View style={[styles.button, styles.dislike]} />
                     <View style={[styles.button, styles.skip]} />
                 </View>
-                <Card/>
+                {/*<Card/>*/}
+                <Animated.View
+                    style={[styles.card, {transform: [{ translateX: pan.x }, { translateY: pan.y }]}]}
+                    {...panResponder.panHandlers}
+                >
+                    <View style={styles.box} />
+                </Animated.View>
             </SafeAreaView>
         </>
     );
