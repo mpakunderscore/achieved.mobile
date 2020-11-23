@@ -6,11 +6,11 @@ export default class Card extends Component {
     render() {
 
         return (
-            <View style={styles.card}>
+            <Animated.View style={styles.card}>
                 <TouchableOpacity
                     style={styles.container}>
                 </TouchableOpacity>
-            </View>
+            </Animated.View>
         );
     }
 }

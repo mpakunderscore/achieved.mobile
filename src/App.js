@@ -1,11 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React, {useEffect, useRef, useState} from 'react';
 import {
     SafeAreaView,
@@ -19,39 +11,28 @@ import {
 import {styles} from './js/styles/styles';
 import {initAPI} from './js/api';
 
-import Card from './js/card';
-
-let cardPress = function () {
-    alert('You tapped the button!');
-}
-
 const App: () => React$Node = () => {
 
     useEffect(() => {
-        initAPI()
-    })
+        initAPI();
+    });
 
     const pan = useRef(new Animated.ValueXY()).current;
+
+    let moveCard = Animated.event([null, {dx: pan.x, dy: pan.y}], { useNativeDriver: false })
 
     const panResponder = useRef(
         PanResponder.create({
             onMoveShouldSetPanResponder: () => true,
-            onPanResponderGrant: () => {
-                pan.setOffset({
-                    x: pan.x._value,
-                    y: pan.y._value
-                });
+            onPanResponderGrant: () => {pan.setOffset({x: pan.x._value, y: pan.y._value})},
+            onPanResponderMove: (event, gestureState) => {
+                console.log(gestureState.moveX)
+                return moveCard(event, gestureState)
             },
-            onPanResponderMove: Animated.event(
-                [
-                    null,
-                    { dx: pan.x, dy: pan.y }
-                ]
-            ),
             onPanResponderRelease: () => {
                 pan.flattenOffset();
             }
-        })
+        }),
     ).current;
 
     return (
@@ -59,17 +40,17 @@ const App: () => React$Node = () => {
             <StatusBar barStyle="dark-content"/>
             <SafeAreaView style={styles.container}>
                 <View style={styles.buttons}>
-                    <View style={[styles.button, styles.done]} />
-                    <View style={[styles.button, styles.like]} />
-                    <View style={[styles.button, styles.dislike]} />
-                    <View style={[styles.button, styles.skip]} />
+                    <View style={[styles.button, styles.done]}/>
+                    <View style={[styles.button, styles.like]}/>
+                    <View style={[styles.button, styles.dislike]}/>
+                    <View style={[styles.button, styles.skip]}/>
                 </View>
                 {/*<Card/>*/}
                 <Animated.View
-                    style={[styles.card, {transform: [{ translateX: pan.x }, { translateY: pan.y }]}]}
+                    style={[styles.card, {transform: [{translateX: pan.x}, {translateY: pan.y}]}]}
                     {...panResponder.panHandlers}
                 >
-                    <View style={styles.box} />
+                    <View style={styles.box}/>
                 </Animated.View>
             </SafeAreaView>
         </>
